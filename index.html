@@ -1,0 +1,887 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>El Archivo del Tiempo — La psicología a través del tiempo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,600;9..144,900&family=Space+Grotesk:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --papel:#FDF8F0;
+  --papel2:#F3E7D6;
+  --tinta:#32251E;
+  --tinta2:#6E5A4C;
+  --marron:#C09570;
+  --marron-osc:#8A5F42;
+  --borde:#E3D2BB;
+  --era:#E9C98B;          /* color de la edición activa */
+  --era-txt:#4A3A17;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--papel);
+  color:var(--tinta);
+  font-family:'Space Grotesk',system-ui,sans-serif;
+  font-size:17px;line-height:1.62;
+}
+a{color:var(--marron-osc)}
+
+/* ───────── CABECERA IMPRENTA ───────── */
+.imprenta{
+  border-bottom:1px solid var(--borde);
+  background:var(--papel2);
+  padding:16px 20px 12px;
+  display:flex;flex-wrap:wrap;gap:8px 18px;align-items:baseline;justify-content:center;
+  font-size:.76rem;color:var(--tinta2);letter-spacing:.06em;
+}
+.imprenta b{color:var(--marron-osc)}
+
+.titular-diario{
+  text-align:center;padding:22px 20px 6px;
+}
+.titular-diario h1{
+  font-family:'Fraunces',Georgia,serif;font-weight:900;
+  font-size:clamp(2.1rem,7.5vw,4.6rem);line-height:.95;letter-spacing:-.01em;
+}
+.titular-diario .lema{
+  font-family:'Fraunces',Georgia,serif;font-style:italic;color:var(--tinta2);
+  font-size:1.02rem;margin-top:8px;
+}
+
+/* ───────── DIAL DEL TIEMPO ───────── */
+.dial-envoltura{
+  position:sticky;top:0;z-index:30;background:var(--papel);
+  border-bottom:2px solid var(--tinta);padding:12px 0 0;
+}
+.dial{
+  display:flex;gap:0;overflow-x:auto;scrollbar-width:none;
+  padding:0 14px;
+}
+.dial::-webkit-scrollbar{display:none}
+.tick{
+  flex:0 0 auto;background:none;border:none;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;
+  padding:4px 14px 12px;text-align:center;color:var(--tinta2);
+  border-bottom:6px solid transparent;
+  transition:color .18s,border-color .18s;
+}
+.tick .anio{display:block;font-size:.72rem;letter-spacing:.08em}
+.tick .rotulo{display:block;font-size:.9rem;font-weight:500;white-space:nowrap}
+.tick:hover{color:var(--tinta)}
+.tick:focus-visible{outline:3px solid var(--marron);outline-offset:-3px}
+.tick.activo{color:var(--tinta);font-weight:700;border-bottom-color:var(--era)}
+
+/* ───────── EDICIÓN ───────── */
+main{max-width:1060px;margin:0 auto;padding:0 20px 80px}
+.edicion{display:none}
+.edicion.abierta{display:block}
+
+.franja{
+  background:var(--era);color:var(--era-txt);
+  border-radius:0 0 4px 4px;
+  padding:14px 20px;margin-bottom:26px;
+  display:flex;flex-wrap:wrap;gap:6px 22px;justify-content:space-between;align-items:center;
+  font-size:.82rem;letter-spacing:.05em;
+}
+.franja .numero{font-family:'Fraunces',Georgia,serif;font-size:1.1rem;font-weight:600}
+
+.cabeza{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:20px;align-items:start;margin-bottom:20px}
+.cabeza h2{
+  font-family:'Fraunces',Georgia,serif;font-weight:900;
+  font-size:clamp(1.8rem,5.2vw,3.1rem);line-height:1.02;
+}
+.cabeza .bajada{
+  font-family:'Fraunces',Georgia,serif;font-style:italic;color:var(--tinta2);
+  font-size:1.08rem;margin-top:8px;
+}
+.cifra{
+  font-family:'Fraunces',Georgia,serif;font-size:clamp(2.4rem,9vw,4.4rem);
+  line-height:.85;color:var(--era);text-align:right;
+}
+.cifra small{display:block;font-size:.8rem;font-family:'Space Grotesk',sans-serif;color:var(--tinta2);letter-spacing:.1em;margin-top:6px}
+
+.columnas{display:grid;grid-template-columns:minmax(0,1.85fr) minmax(0,1fr);gap:34px}
+.plana{border-top:3px solid var(--tinta);padding-top:18px}
+.plana p{margin-bottom:15px;max-width:66ch}
+.plana p.entrada::first-letter{
+  float:left;font-family:'Fraunces',Georgia,serif;font-size:3.6rem;line-height:.78;
+  padding:4px 10px 0 0;color:var(--marron-osc);
+}
+.margen{border-top:3px solid var(--tinta);padding-top:18px}
+
+/* fichas de personajes: formato "ficha de archivo" */
+.fichero{display:grid;gap:0;margin:8px 0 22px;border-top:1px solid var(--borde)}
+.ficha{
+  border-bottom:1px solid var(--borde);
+  display:grid;grid-template-columns:118px minmax(0,1fr);gap:18px;padding:16px 0;
+}
+.ficha .sello{
+  font-size:.74rem;letter-spacing:.07em;color:var(--tinta2);
+  border-left:4px solid var(--era);padding-left:10px;
+}
+.ficha h3{font-family:'Fraunces',Georgia,serif;font-size:1.3rem;margin-bottom:4px}
+.ficha p{font-size:.96rem;margin-bottom:8px;max-width:62ch}
+.ficha .hoy{font-size:.88rem;color:var(--marron-osc)}
+.ficha .hoy b{color:var(--tinta)}
+
+/* módulos del margen */
+.modulo{margin-bottom:22px}
+.modulo h4{
+  font-family:'Space Grotesk',sans-serif;font-size:.8rem;letter-spacing:.12em;
+  color:var(--marron-osc);margin-bottom:8px;border-bottom:1px dotted var(--borde);padding-bottom:6px;
+}
+.modulo p,.modulo li{font-size:.93rem}
+.modulo ul{list-style:none}
+.modulo li{padding:7px 0;border-bottom:1px dotted var(--borde)}
+.recuadro{background:var(--papel2);border-radius:6px;padding:14px 16px;font-size:.93rem}
+.termometro{display:flex;flex-direction:column;gap:8px}
+.barra{font-size:.8rem;color:var(--tinta2)}
+.barra span{display:block;height:9px;border-radius:9px;background:var(--era);margin-top:4px}
+.barra i{display:block;height:9px;border-radius:9px;background:var(--borde)}
+
+blockquote{
+  font-family:'Fraunces',Georgia,serif;font-size:1.22rem;line-height:1.4;
+  border-top:3px solid var(--era);border-bottom:3px solid var(--era);
+  padding:16px 0;margin:24px 0;
+}
+blockquote footer{font-family:'Space Grotesk',sans-serif;font-size:.8rem;color:var(--tinta2);letter-spacing:.06em;margin-top:8px}
+
+/* ───────── PORTADA / KIOSCO ───────── */
+.kiosco{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;margin:26px 0 30px}
+.pliego{
+  background:#fff;border:1px solid var(--borde);border-top:8px solid var(--marron);
+  border-radius:3px;padding:16px;text-align:left;cursor:pointer;
+  font-family:'Space Grotesk',sans-serif;
+}
+.pliego:hover{background:var(--papel2)}
+.pliego:focus-visible{outline:3px solid var(--marron);outline-offset:2px}
+.pliego .n{font-size:.72rem;letter-spacing:.1em;color:var(--tinta2)}
+.pliego strong{display:block;font-family:'Fraunces',Georgia,serif;font-size:1.12rem;margin:6px 0 4px}
+.pliego em{font-style:normal;font-size:.86rem;color:var(--tinta2)}
+
+.credencial{
+  border:2px solid var(--tinta);border-radius:4px;padding:22px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:18px;margin-bottom:26px;
+}
+.credencial div span{display:block;font-size:.72rem;letter-spacing:.12em;color:var(--tinta2);margin-bottom:4px}
+.credencial div strong{font-family:'Fraunces',Georgia,serif;font-size:1.08rem;font-weight:600;line-height:1.3}
+
+/* ───────── ARCHIVO / LÍNEA DEL TIEMPO ───────── */
+.rollo{border-top:3px solid var(--tinta);padding-top:22px}
+.tramo{
+  display:grid;grid-template-columns:150px minmax(0,1fr);gap:22px;
+  padding:18px 0;border-bottom:1px solid var(--borde);
+}
+.tramo .eje{font-family:'Fraunces',Georgia,serif;font-size:1.05rem;color:var(--marron-osc)}
+.tramo .eje small{display:block;font-family:'Space Grotesk',sans-serif;font-size:.74rem;letter-spacing:.08em;color:var(--tinta2);margin-top:4px}
+.tramo h3{font-family:'Fraunces',Georgia,serif;font-size:1.22rem;margin-bottom:4px}
+.tramo p{font-size:.95rem;max-width:62ch}
+
+/* ───────── FUENTES ───────── */
+.fuente{
+  border-bottom:1px solid var(--borde);padding:16px 0 16px 34px;text-indent:-34px;font-size:.96rem;
+}
+
+footer.pie{
+  border-top:2px solid var(--tinta);margin-top:40px;padding:24px 20px 50px;
+  text-align:center;color:var(--tinta2);font-size:.84rem;letter-spacing:.04em;
+}
+
+@media (max-width:820px){
+  .columnas{grid-template-columns:1fr;gap:26px}
+  .cabeza{grid-template-columns:1fr}
+  .cifra{text-align:left}
+  .ficha{grid-template-columns:1fr;gap:8px}
+  .ficha .sello{border-left:none;border-top:4px solid var(--era);padding:8px 0 0}
+  .tramo{grid-template-columns:1fr;gap:6px}
+}
+@media (prefers-reduced-motion:reduce){*{transition:none!important}}
+</style>
+</head>
+<body>
+
+<div class="imprenta">
+  <span>Edición especial · <b>Reconocimiento de los Antecedentes de la Psicología</b></span>
+  <span>UNAD — Programa de Psicología</span>
+</div>
+
+<div class="titular-diario">
+  <h1>El Archivo del Tiempo</h1>
+  <p class="lema">La psicología a través del tiempo — un diario que reabre una edición por cada época</p>
+</div>
+
+<div class="dial-envoltura">
+  <div class="dial" id="dial" role="tablist" aria-label="Ediciones por época"></div>
+</div>
+
+<main>
+
+<!-- ══ PORTADA ══ -->
+<section class="edicion abierta" id="e0" data-era="#C09570" data-txt="#3A2415">
+  <div class="franja"><span class="numero"></span></div>
+
+  <div class="cabeza">
+    <div>
+      <h2>Nueve ediciones, veinticinco siglos, una sola pregunta</h2>
+      <p class="bajada">¿Qué es el ser humano y cómo podemos estudiarlo?</p>
+    </div>
+    <div class="cifra">IX<small>Ediciones</small></div>
+  </div>
+
+  <div class="columnas">
+    <div class="plana">
+      <p class="entrada">Hoy pensamos en la psicología como la ciencia que estudia la mente, las emociones
+      y el comportamiento. Pero esas preguntas no nacieron con los primeros laboratorios: llevaban
+      siglos circulando entre filósofos, médicos, fisiólogos y estudiosos de la sociedad.</p>
+
+      <p>Este diario no se lee de principio a fin como un solo número. Funciona como un archivo:
+      cada época publicó su propia edición, con sus protagonistas, sus discusiones y su forma de
+      entender al ser humano. Al abrir una edición se lee lo que esa época tenía para decir, y al
+      recorrer el dial superior se ve cómo una idea condujo a la siguiente.</p>
+
+      <p>El recorrido va de Grecia a la consolidación de la psicología científica, e incluye dos
+      números especiales: uno dedicado a las emociones y otro al encuentro entre biología y psicología.</p>
+
+      <blockquote>La psicología no apareció de repente. Fue el resultado de un proceso histórico en el
+      que distintas formas de entender al ser humano fueron cambiando y relacionándose entre sí.
+      <footer>Premisa de esta edición</footer></blockquote>
+
+      <div class="kiosco" id="kiosco"></div>
+    </div>
+
+    <aside class="margen">
+      <div class="credencial" style="grid-template-columns:1fr">
+        <div><span>ACTIVIDAD</span><strong>Reconocimiento de los Antecedentes de la Psicología</strong></div>
+        <div><span>REDACCIÓN</span><strong>Wandy Michell Ortiz Ropero</strong></div>
+        <div><span>CASA EDITORA</span><strong>UNAD — Programa de Psicología</strong></div>
+      </div>
+
+      <div class="modulo">
+        <h4>CÓMO LEER ESTE ARCHIVO</h4>
+        <div class="recuadro">Use el dial del tiempo de la parte superior para saltar de una época a
+        otra, o abra directamente cualquiera de los pliegos de la izquierda. Cada edición trae su
+        fecha, sus protagonistas y una columna lateral con el clima intelectual del momento.</div>
+      </div>
+
+      <div class="modulo">
+        <h4>EN ESTE NÚMERO</h4>
+        <ul>
+          <li>Las emociones griegas y su contexto cultural</li>
+          <li>El problema mente–cuerpo de Descartes</li>
+          <li>Fechner: medir lo que parecía inmedible</li>
+          <li>Biología y psicología, dos caminos comparados</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ══ GRECIA ══ -->
+<section class="edicion" id="e1" data-era="#E9C98B" data-txt="#4A3A17">
+  <div class="franja"><span>Edición I · Antigua Grecia</span><span class="numero">Siglos V–IV a. C.</span></div>
+
+  <div class="cabeza">
+    <div>
+      <h2>Comienzan las preguntas sobre el ser humano</h2>
+      <p class="bajada">Alma, cuerpo, conocimiento y conducta entran por primera vez en discusión pública</p>
+    </div>
+    <div class="cifra">V a.C.<small>Atenas</small></div>
+  </div>
+
+  <div class="columnas">
+    <div class="plana">
+      <p class="entrada">En la Antigua Grecia surgieron reflexiones decisivas sobre el alma, el
+      conocimiento, el cuerpo, las emociones y la conducta. Todavía no existía la psicología como
+      ciencia, pero allí nacieron las preguntas que esta disciplina retomaría siglos después.</p>
+
+      <div class="fichero">
+        <article class="ficha">
+          <div class="sello">470–399 a. C.<br>Filosofía</div>
+          <div>
+            <h3>Sócrates</h3>
+            <p>Puso especial interés en el conocimiento de uno mismo y en la reflexión sobre la vida
+            humana. Enseñaba mediante preguntas y diálogo, para que cada persona examinara sus propias ideas.</p>
+            <p class="hoy"><b>Su importancia:</b> colocó al ser humano y su vida interior en el centro de la reflexión filosófica.</p>
+          </div>
+        </article>
+
+        <article class="ficha">
+          <div class="sello">427–347 a. C.<br>Filosofía</div>
+          <div>
+            <h3>Platón</h3>
+            <p>Desarrolló una concepción del alma relacionada con diferentes dimensiones de la vida
+            humana, que permitió reflexionar sobre la razón, los deseos y las emociones.</p>
+            <p class="hoy"><b>Su importancia:</b> influyó durante siglos en la manera de comprender la mente y el comportamiento.</p>
+          </div>
+        </article>
+
+        <article class="ficha">
+          <div class="sello">384–322 a. C.<br>Filosofía natural</div>
+          <div>
+            <h3>Aristóteles</h3>
+            <p>En <i>De Anima</i> estudió el alma y las capacidades de los seres vivos, abordando
+            temas que hoy relacionamos con la percepción, la memoria, el pensamiento, el aprendizaje
+            y las emociones.</p>
+            <p class="hoy"><b>Su importancia:</b> aportó una visión más naturalista del ser humano.</p>
+          </div>
+        </article>
+
+        <article class="ficha">
+          <div class="sello">460–370 a. C.<br>Medicina</div>
+          <div>
+            <h3>Hipócrates</h3>
+            <p>Sostuvo que las alteraciones del comportamiento tenían causas naturales en el
+            organismo y no un origen sobrenatural. Su teoría de los humores vinculó el cuerpo con
+            el temperamento.</p>
+            <p class="hoy"><b>Su importancia:</b> abrió el camino para explicar la conducta desde causas biológicas observables.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <aside class="margen">
+      <div class="modulo">
+        <h4>CLIMA INTELECTUAL DE LA ÉPOCA</h4>
+        <div class="termometro">
+          <div class="barra">Explicación filosófica<span style="width:92%"></span><i></i></div>
+          <div class="barra">Observación médica<span style="width:55%"></span><i></i></div>
+          <div class="barra">Medición experimental<span style="width:8%"></span><i></i></div>
+        </div>
+      </div>
+      <div class="modulo">
+        <h4>LO QUE HOY LLAMARÍAMOS…</h4>
+        <ul>
+          <li>Introspección → autoconocimiento socrático</li>
+          <li>Motivación → los deseos en Platón</li>
+          <li>Memoria y percepción → <i>De Anima</i></li>
+          <li>Personalidad → los humores de Hipócrates</li>
+        </ul>
+      </div>
+      <div class="modulo">
+        <h4>PREGUNTA ABIERTA DE LA EDICIÓN</h4>
+        <div class="recuadro">Si el alma explica la vida, ¿puede estudiarse igual que se estudia el cuerpo?</div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ══ EMOCIONES ══ -->
+<section class="edicion" id="e2" data-era="#E7B2AE" data-txt="#4C2C29">
+  <div class="franja"><span>Afectividad</span><span class="numero">Grecia antigua</span></div>
+
+  <div class="cabeza">
+    <div>
+      <h2>Sentir también tiene una historia</h2>
+      <p class="bajada">Las emociones griegas no se entienden sin la cultura que las nombraba</p>
+    </div>
+    <div class="cifra">2022<small>Fernández y Buis</small></div>
+  </div>
+
+  <div class="columnas">
+    <div class="plana">
+      <p class="entrada">Las emociones han sido objeto de reflexión desde la Antigüedad. Fernández y
+      Buis (2022) explican que estudiar la afectividad en la Grecia antigua permite comprender cómo
+      las sociedades de ese período representaban y expresaban las emociones.</p>
+
+      <p>Los autores señalan que el estudio histórico de las emociones presenta dificultades, porque
+      no podemos asumir que las personas de otras épocas entendían o expresaban los sentimientos
+      exactamente de la misma manera que nosotros. Por eso, para estudiar la afectividad en Grecia es
+      necesario tener en cuenta la literatura, la cultura y la retórica.</p>
+
+      <p>Para los griegos, sentir no era un hecho puramente privado: la emoción se manifestaba en el
+      cuerpo, se interpretaba desde las ideas sobre el alma y adquiría sentido dentro de la vida
+      social, donde expresarla de cierta forma podía ser aprobado o censurado.</p>
+
+      <blockquote>Las emociones no son solo algo individual: están ligadas a la época, la cultura y
+      a lo que cada sociedad entiende por sentir.
+      <footer>Idea central del número especial</footer></blockquote>
+
+      <p>De ahí una conclusión que atraviesa todo este archivo: el interés por comprender las
+      emociones no nació con la psicología moderna, ya existía mucho antes.</p>
+    </div>
+
+    <aside class="margen">
+      <div class="modulo">
+        <h4>TRES CLAVES PARA LEER LAS EMOCIONES ANTIGUAS</h4>
+        <ul>
+          <li>No traducir sentimientos antiguos con categorías actuales</li>
+          <li>Leer la literatura y la retórica como fuente de evidencia</li>
+          <li>Considerar qué emociones aprobaba o censuraba la comunidad</li>
+        </ul>
+      </div>
+      <div class="modulo">
+        <h4>CLIMA INTELECTUAL DE LA ÉPOCA</h4>
+        <div class="termometro">
+          <div class="barra">Peso de la cultura<span style="width:95%"></span><i></i></div>
+          <div class="barra">Explicación corporal<span style="width:60%"></span><i></i></div>
+          <div class="barra">Estudio individual<span style="width:30%"></span><i></i></div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ══ EDAD MEDIA Y MODERNIDAD ══ -->
+<section class="edicion" id="e3" data-era="#BFAFD8" data-txt="#39294E">
+  <div class="franja"><span>Edición II · De la Edad Media a la Modernidad</span><span class="numero">Siglos IV–XVIII</span></div>
+
+  <div class="cabeza">
+    <div>
+      <h2>Nuevas formas de entender la mente</h2>
+      <p class="bajada">La fe, la razón y la experiencia se disputan la explicación del alma</p>
+    </div>
+    <div class="cifra">XIV<small>Siglos de debate</small></div>
+  </div>
+
+  <div class="columnas">
+    <div class="plana">
+      <p class="entrada">Durante la Edad Media continuaron las reflexiones sobre el alma, el
+      conocimiento y la voluntad, relacionadas sobre todo con la filosofía y el pensamiento religioso.
+      Después, en el Renacimiento y la Modernidad, la observación, la experiencia y la razón
+      adquirieron cada vez más importancia.</p>
+
+      <div class="fichero">
+        <article class="ficha">
+          <div class="sello">354–430<br>Edad Media</div>
+          <div>
+            <h3>Agustín de Hipona</h3>
+            <p>Exploró la vida interior mediante la introspección: la memoria, la voluntad y la
+            conciencia de sí ocupan un lugar central en su pensamiento.</p>
+            <p class="hoy"><b>Aporte:</b> el primer gran ejercicio de mirada hacia el propio mundo interno.</p>
+          </div>
+        </article>
+        <article class="ficha">
+          <div class="sello">1225–1274<br>Escolástica</div>
+          <div>
+            <h3>Tomás de Aquino</h3>
+            <p>Retomó a Aristóteles y sostuvo que el conocimiento comienza en los sentidos,
+            integrando alma, cuerpo y facultades dentro de una misma explicación.</p>
+            <p class="hoy"><b>Aporte:</b> recuperó la vía naturalista para estudiar las capacidades humanas.</p>
+          </div>
+        </article>
+        <article class="ficha">
+          <div class="sello">1596–1650<br>Racionalismo</div>
+          <div>
+            <h3>René Descartes</h3>
+            <p>Sus planteamientos sobre la relación entre mente y cuerpo fueron fundamentales para
+            las discusiones posteriores sobre la naturaleza humana.</p>
+            <p class="hoy"><b>Aporte:</b> instaló el problema mente–cuerpo, discutido hasta hoy.</p>
+          </div>
+        </article>
+        <article class="ficha">
+          <div class="sello">1632–1704<br>Empirismo</div>
+          <div>
+            <h3>John Locke</h3>
+            <p>Defendió la importancia de la experiencia en la formación del conocimiento: la mente
+            se forma a partir de lo que vivimos y percibimos.</p>
+            <p class="hoy"><b>Aporte:</b> base del empirismo y del estudio del aprendizaje.</p>
+          </div>
+        </article>
+        <article class="ficha">
+          <div class="sello">1711–1776<br>Empirismo</div>
+          <div>
+            <h3>David Hume</h3>
+            <p>Profundizó en la experiencia y en la asociación de ideas, explicando cómo unas ideas
+            llaman a otras dentro de la mente.</p>
+            <p class="hoy"><b>Aporte:</b> antecedente directo del asociacionismo psicológico.</p>
+          </div>
+        </article>
+        <article class="ficha">
+          <div class="sello">1724–1804<br>Criticismo</div>
+          <div>
+            <h3>Immanuel Kant</h3>
+            <p>Reflexionó sobre cómo conocemos y sobre la manera en que la mente participa
+            activamente en nuestra experiencia del mundo.</p>
+            <p class="hoy"><b>Aporte:</b> la mente deja de ser receptora pasiva y pasa a organizar la experiencia.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <aside class="margen">
+      <div class="modulo">
+        <h4>EL GIRO DE LA ÉPOCA</h4>
+        <div class="recuadro">Se pasa de preguntar <i>qué es el alma</i> a preguntar <i>cómo conocemos</i>.
+        Ese cambio de pregunta es lo que hace posible, más adelante, medir procesos mentales.</div>
+      </div>
+      <div class="modulo">
+        <h4>CLIMA INTELECTUAL DE LA ÉPOCA</h4>
+        <div class="termometro">
+          <div class="barra">Filosofía y teología<span style="width:85%"></span><i></i></div>
+          <div class="barra">Razón y método<span style="width:70%"></span><i></i></div>
+          <div class="barra">Experimentación<span style="width:25%"></span><i></i></div>
+        </div>
+      </div>
+      <div class="modulo">
+        <h4>HACIA DÓNDE CONDUCE</h4>
+        <p>Estos planteamientos preparan el camino hacia la psicofísica y la psicología fisiológica,
+        ubicadas por el manual de la UNED entre los antecedentes de la psicología moderna.</p>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ══ CIENCIAS NATURALES ══ -->
+<section class="edicion" id="e4" data-era="#A6C3A8" data-txt="#2F4431">
+  <div class="franja"><span>Edición III · La ciencia entra en escena</span><span class="numero">Siglo XIX</span></div>
+
+  <div class="cabeza">
+    <div>
+      <h2>La psicología se acerca a las ciencias naturales</h2>
+      <p class="bajada">La experiencia humana empieza a entrar al laboratorio</p>
+    </div>
+    <div class="cifra">XIX<small>Siglo del laboratorio</small></div>
+  </div>
+
+  <div class="columnas">
+    <div class="plana">
+      <p class="entrada">Durante el siglo XIX las ciencias naturales influyeron cada vez más en la
+      manera de estudiar al ser humano. La fisiología aportó conocimientos sobre el funcionamiento
+      del organismo y los sentidos, mientras que el evolucionismo modificó la forma de comprender a
+      los seres vivos.</p>
+
+      <div class="fichero">
+        <article class="ficha">
+          <div class="sello">Disciplina<br>Fisiología</div>
+          <div><h3>El organismo bajo observación</h3>
+          <p>Permitió estudiar en el laboratorio procesos como la sensación, el tiempo de reacción y
+          la actividad nerviosa, con instrumentos y medidas.</p></div>
+        </article>
+        <article class="ficha">
+          <div class="sello">Disciplina<br>Biología</div>
+          <div><h3>Un modelo de ciencia</h3>
+          <p>Ofreció una forma de explicar al ser humano como organismo vivo, sujeto a leyes naturales.</p></div>
+        </article>
+        <article class="ficha">
+          <div class="sello">Objeto<br>Percepción</div>
+          <div><h3>Los sentidos como terreno de prueba</h3>
+          <p>La percepción se convirtió en el primer campo donde la experiencia humana pudo medirse.</p></div>
+        </article>
+        <article class="ficha">
+          <div class="sello">Teoría<br>Evolucionismo</div>
+          <div><h3>Adaptación y continuidad</h3>
+          <p>El darwinismo introdujo la idea de continuidad entre especies; de allí derivaron también
+          el darwinismo social y el hereditarismo, incluidos por la UNED entre los antecedentes
+          científico-naturales.</p></div>
+        </article>
+        <article class="ficha">
+          <div class="sello">1801–1887<br>Psicofísica</div>
+          <div>
+            <h3>Gustav Theodor Fechner</h3>
+            <p>Buscó establecer relaciones entre los estímulos físicos y las sensaciones, y demostró
+            que algunos fenómenos de la experiencia humana podían estudiarse de manera cuantitativa.</p>
+            <p class="hoy"><b>Legado:</b> medir lo que hasta entonces parecía inmedible.</p>
+          </div>
+        </article>
+        <article class="ficha">
+          <div class="sello">1821–1894<br>Fisiología</div>
+          <div>
+            <h3>Hermann von Helmholtz</h3>
+            <p>Investigó los sentidos y la percepción, acercando la fisiología al estudio de los
+            procesos psicológicos.</p>
+            <p class="hoy"><b>Legado:</b> método experimental aplicado a la visión, la audición y el sistema nervioso.</p>
+          </div>
+        </article>
+      </div>
+    </div>
+
+    <aside class="margen">
+      <div class="modulo">
+        <h4>CLIMA INTELECTUAL DE LA ÉPOCA</h4>
+        <div class="termometro">
+          <div class="barra">Medición experimental<span style="width:88%"></span><i></i></div>
+          <div class="barra">Explicación biológica<span style="width:80%"></span><i></i></div>
+          <div class="barra">Especulación filosófica<span style="width:35%"></span><i></i></div>
+        </div>
+      </div>
+      <div class="modulo">
+        <h4>EL INSTRUMENTO DEL SIGLO</h4>
+        <div class="recuadro">La medida. Cuando una sensación puede expresarse en números, deja de ser
+        solo tema de conversación y pasa a ser dato.</div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ══ BIOLOGÍA Y PSICOLOGÍA ══ -->
+<section class="edicion" id="e5" data-era="#93C2BC" data-txt="#24403C">
+  <div class="franja"><span>Comparación disciplinar</span><span class="numero">Siglo XIX</span></div>
+
+  <div class="cabeza">
+    <div>
+      <h2>Dos disciplinas que comenzaron a encontrarse</h2>
+      <p class="bajada">Biología y psicología, caminos paralelos hacia la condición de ciencia</p>
+    </div>
+    <div class="cifra">2023<small>Roncancio-Henao y Gutiérrez</small></div>
+  </div>
+
+  <div class="columnas">
+    <div class="plana">
+      <p class="entrada">Roncancio-Henao y Gutiérrez (2023) explican que durante el siglo XIX varias
+      disciplinas comenzaron a consolidarse como ciencias independientes. En ese proceso apareció una
+      pregunta importante: ¿debían las ciencias de la vida estudiar sus objetos siguiendo el mismo
+      modelo de la física?</p>
+
+      <p>La biología atravesó debates entre perspectivas naturalistas y fisiológicas. Finalmente, la
+      teoría de la evolución fue fundamental para lograr su integración como disciplina científica.</p>
+
+      <p>La psicología también buscó acercarse a las ciencias naturales, especialmente a través de la
+      fisiología. Sin embargo, los autores explican que ese acercamiento no significó una integración
+      completa: la psicología tuvo que enfrentar distintos problemas para definir cuál sería su objeto
+      de estudio y qué métodos debía utilizar.</p>
+
+      <blockquote>Consolidarse como ciencia no depende solo de tener un método, sino de acordar qué
+      se estudia y cómo se estudia.
+      <footer>Lectura comparada de ambos procesos</footer></blockquote>
+    </div>
+
+    <aside class="margen">
+      <div class="modulo">
+        <h4>DOS TRAYECTOS, UNA COMPARACIÓN</h4>
+        <ul>
+          <li><b>Biología:</b> la evolución le dio un eje unificador y cerró sus debates internos.</li>
+          <li><b>Psicología:</b> se acercó a la fisiología, pero siguió discutiendo su objeto de estudio.</li>
+        </ul>
+      </div>
+      <div class="modulo">
+        <h4>PREGUNTA ABIERTA DE LA EDICIÓN</h4>
+        <div class="recuadro">¿Puede la vida mental estudiarse con el mismo modelo con que se estudia
+        la materia?</div>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ══ SOCIEDAD ══ -->
+<section class="edicion" id="e6" data-era="#A5BDD9" data-txt="#25384F">
+  <div class="franja"><span>Edición IV · Psicología y sociedad</span><span class="numero">Siglo XIX</span></div>
+
+  <div class="cabeza">
+    <div>
+      <h2>El ser humano no vive aislado</h2>
+      <p class="bajada">La cultura y la vida social entran en la explicación de la conducta</p>
+    </div>
+    <div class="cifra">III<small>Capítulo UNED</small></div>
+  </div>
+
+  <div class="columnas">
+    <div class="plana">
+      <p class="entrada">La psicología no recibió influencia únicamente de las ciencias naturales:
+      también se relacionó con las ciencias sociales y humanas. Durante el siglo XIX se desarrollaron
+      disciplinas como la sociología y la antropología, junto con diversos estudios sobre la cultura
+      y la sociedad.</p>
+
+      <p>Esto permitió plantear que, para comprender al ser humano, no basta con estudiar su
+      organismo: también es necesario considerar su historia, su cultura, sus relaciones sociales y
+      su contexto.</p>
+
+      <p>El manual de la UNED dedica su capítulo III a los antecedentes científico-sociales, donde
+      aborda las ciencias humanas y de la cultura, la sociología y el estudio de la conciencia colectiva.</p>
+
+      <blockquote>La conducta deja de explicarse solo desde el individuo: el lenguaje, las costumbres
+      y las creencias compartidas pasan a formar parte del objeto de estudio.
+      <footer>Ampliación de la mirada psicológica</footer></blockquote>
+    </div>
+
+    <aside class="margen">
+      <div class="modulo">
+        <h4>CLIMA INTELECTUAL DE LA ÉPOCA</h4>
+        <div class="termometro">
+          <div class="barra">Explicación social<span style="width:85%"></span><i></i></div>
+          <div class="barra">Explicación biológica<span style="width:65%"></span><i></i></div>
+          <div class="barra">Explicación individual<span style="width:45%"></span><i></i></div>
+        </div>
+      </div>
+      <div class="modulo">
+        <h4>QUÉ SUMA ESTA MIRADA</h4>
+        <ul>
+          <li>Historia y contexto como variables</li>
+          <li>Cultura y costumbres compartidas</li>
+          <li>Relaciones sociales e instituciones</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ══ ARCHIVO / LÍNEA DEL TIEMPO ══ -->
+<section class="edicion" id="e7" data-era="#C09570" data-txt="#3A2415">
+  <div class="franja"><span class="numero">Todas las ediciones</span></div>
+
+  <div class="cabeza">
+    <div>
+      <h2>El camino hacia la psicología moderna</h2>
+      <p class="bajada">El recorrido completo, de Grecia a la consolidación de la disciplina</p>
+    </div>
+    <div class="cifra">25<small>Siglos</small></div>
+  </div>
+
+  <div class="rollo">
+    <div class="tramo">
+      <div class="eje">Siglos V–IV a. C.<small>ANTIGUA GRECIA</small></div>
+      <div><h3>Sócrates, Platón, Aristóteles e Hipócrates</h3>
+      <p>Reflexiones sobre el alma, el cuerpo, el conocimiento y las emociones; primeras
+      explicaciones naturales de la conducta.</p></div>
+    </div>
+    <div class="tramo">
+      <div class="eje">Siglos IV–XIII<small>EDAD MEDIA</small></div>
+      <div><h3>Agustín de Hipona y Tomás de Aquino</h3>
+      <p>El pensamiento sobre el alma y el conocimiento se vincula con la filosofía y la religión, y
+      se recupera la herencia aristotélica.</p></div>
+    </div>
+    <div class="tramo">
+      <div class="eje">Siglos XVII–XVIII<small>MODERNIDAD</small></div>
+      <div><h3>Descartes, Locke, Hume y Kant</h3>
+      <p>La razón y la experiencia ganan terreno; el problema mente–cuerpo y la asociación de ideas
+      quedan planteados.</p></div>
+    </div>
+    <div class="tramo">
+      <div class="eje">Siglo XIX<small>CIENCIAS SOCIALES</small></div>
+      <div><h3>Sociología, antropología y estudios de la cultura</h3>
+      <p>Nuevas formas de estudiar la sociedad y al ser humano dentro de ella.</p></div>
+    </div>
+    <div class="tramo">
+      <div class="eje">Siglo XIX<small>CIENCIAS NATURALES</small></div>
+      <div><h3>Fechner, Helmholtz y el evolucionismo</h3>
+      <p>La fisiología, la biología y la evolución transforman el estudio de los procesos humanos y
+      hacen posible medirlos.</p></div>
+    </div>
+    <div class="tramo">
+      <div class="eje">Finales del siglo XIX<small>CONSOLIDACIÓN</small></div>
+      <div><h3>La psicología como disciplina científica</h3>
+      <p>Los antecedentes filosóficos, científico-sociales y científico-naturales confluyen y la
+      psicología se constituye como ciencia.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══ EDITORIAL ══ -->
+<section class="edicion" id="e8" data-era="#EBCE8E" data-txt="#4A3A17">
+  <div class="franja"><span>Editorial de cierre</span><span class="numero">De la redacción</span></div>
+
+  <div class="cabeza">
+    <div>
+      <h2>¿Por qué conocer los antecedentes de la psicología?</h2>
+      <p class="bajada">Una disciplina se entiende mejor cuando se conoce de dónde viene</p>
+    </div>
+    <div class="cifra">—<small>Opinión</small></div>
+  </div>
+
+  <div class="columnas">
+    <div class="plana">
+      <p class="entrada">Después de recorrer estas ediciones podemos entender que la psicología es el
+      resultado de un proceso histórico bastante amplio. No nació de un día para otro ni en un solo lugar.</p>
+
+      <p>Primero, las preguntas sobre el ser humano estuvieron relacionadas principalmente con la
+      filosofía. Después comenzaron a aparecer nuevas formas de comprender el conocimiento, las
+      emociones y la relación entre mente y cuerpo.</p>
+
+      <p>Más adelante, la psicología empezó a relacionarse con las ciencias sociales y naturales. La
+      biología, la fisiología y el estudio de la evolución aportaron nuevas maneras de investigar al
+      ser humano, mientras que las ciencias sociales permitieron considerar la importancia de la
+      cultura y la sociedad.</p>
+
+      <p>Por eso, conocer los antecedentes permite comprender que esta disciplina se construyó gracias
+      a diferentes aportes y debates, y que seguir preguntándose por el ser humano sigue siendo parte
+      de su trabajo.</p>
+    </div>
+
+    <aside class="margen">
+      <div class="modulo">
+        <h4>TRES IDEAS QUE DEJA ESTE ARCHIVO</h4>
+        <ul>
+          <li><b>Raíces filosóficas.</b> Las preguntas sobre el alma, la mente, el conocimiento y las
+          emociones existen desde la Antigüedad.</li>
+          <li><b>Las emociones tienen contexto.</b> La forma de entenderlas y expresarlas cambia
+          según la cultura y la época.</li>
+          <li><b>Una construcción compartida.</b> La psicología se formó entre ciencias naturales y
+          ciencias sociales.</li>
+        </ul>
+      </div>
+    </aside>
+  </div>
+</section>
+
+<!-- ══ FUENTES ══ -->
+<section class="edicion" id="e9" data-era="#C09570" data-txt="#3A2415">
+  <div class="franja"><span class="numero">Fuentes consultadas · APA 7</span></div>
+
+  <div class="cabeza">
+    <div>
+      <h2>Referencias</h2>
+      <p class="bajada">Material que sostiene cada una de las ediciones de este archivo</p>
+    </div>
+    <div class="cifra">03<small>Fuentes</small></div>
+  </div>
+
+  <div class="rollo">
+    <div class="fuente">Castro, J. (2017). <i>Historia de la psicología</i>. UNED – Universidad Nacional de Educación a Distancia.</div>
+    <div class="fuente">Fernández, C. N., &amp; Buis, E. J. (2022). Sentir y emocionar(se): aproximaciones al estudio de la afectividad en la Grecia antigua. <i>Circe de Clásicos y Modernos, 26</i>(2), 15–44. <a href="https://doi.org/10.19137/circe-2022-260201">https://doi.org/10.19137/circe-2022-260201</a></div>
+    <div class="fuente">Roncancio-Henao, L., &amp; Gutiérrez, G. (2023). Integración y consolidación disciplinar en la biología y la psicología. Una perspectiva comparada. <i>Interdisciplinaria, 40</i>(2), 7–22. <a href="https://doi.org/10.16888/interd.2023.40.2.1">https://doi.org/10.16888/interd.2023.40.2.1</a></div>
+  </div>
+</section>
+
+</main>
+
+<footer class="pie">
+  El Archivo del Tiempo · Reconocimiento de los Antecedentes de la Psicología<br>
+  UNAD — Programa de Psicología · Wandy Michell Ortiz Ropero
+</footer>
+
+<script>
+const ediciones = [
+  ["e0","Portada","Archivo"],
+  ["e1","Grecia","s. V–IV a.C."],
+  ["e2","Emociones","Especial"],
+  ["e3","Edad Media y Modernidad","s. IV–XVIII"],
+  ["e4","La ciencia entra en escena","s. XIX"],
+  ["e5","Biología y psicología","Especial"],
+  ["e6","Psicología y sociedad","s. XIX"],
+  ["e7","Línea del tiempo","Archivo"],
+  ["e8","Editorial","Cierre"],
+  ["e9","Referencias","APA 7"]
+];
+
+const dial = document.getElementById("dial");
+const kiosco = document.getElementById("kiosco");
+
+function abrir(id){
+  document.querySelectorAll(".edicion").forEach(s => s.classList.toggle("abierta", s.id === id));
+  document.querySelectorAll(".tick").forEach(t => {
+    const act = t.dataset.id === id;
+    t.classList.toggle("activo", act);
+    t.setAttribute("aria-selected", act);
+    if (act) t.scrollIntoView({block:"nearest", inline:"center", behavior:"smooth"});
+  });
+  const sec = document.getElementById(id);
+  document.documentElement.style.setProperty("--era", sec.dataset.era);
+  document.documentElement.style.setProperty("--era-txt", sec.dataset.txt);
+  window.scrollTo({top:0, behavior:"instant"});
+}
+
+ediciones.forEach(([id, rotulo, anio]) => {
+  const b = document.createElement("button");
+  b.className = "tick";
+  b.dataset.id = id;
+  b.setAttribute("role","tab");
+  b.innerHTML = `<span class="anio">${anio}</span><span class="rotulo">${rotulo}</span>`;
+  b.addEventListener("click", () => abrir(id));
+  dial.appendChild(b);
+
+  if (id !== "e0"){
+    const p = document.createElement("button");
+    p.className = "pliego";
+    p.style.borderTopColor = document.getElementById(id).dataset.era;
+    p.innerHTML = `<span class="n">${anio}</span><strong>${rotulo}</strong><em>Abrir edición</em>`;
+    p.addEventListener("click", () => abrir(id));
+    kiosco.appendChild(p);
+  }
+});
+
+abrir("e0");
+</script>
+
+</body>
+</html>

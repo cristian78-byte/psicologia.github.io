@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Museo Virtual · Los pioneros de la psicología precientífica</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="museo.css">
+</head>
+<body>
+
+<header class="topbar">
+  <div class="marca"><span class="icono" id="icono-marca">🏛️</span> Museo Virtual · Pioneros de la Psicología</div>
+  <div class="progreso-wrap">
+    <span id="texto-progreso">0 / 6 salas visitadas</span>
+    <div class="progreso-pista"><div class="progreso-barra" id="barra-progreso"></div></div>
+  </div>
+</header>
+
+<div class="app">
+  <nav class="rail" id="rail"></nav>
+
+  <main class="escenario" id="escenario"></main>
+</div>
+
+<div class="velo" id="velo">
+  <div class="modal" id="modal-contenido"></div>
+</div>
+
+<script>
+/* ══════════ DATOS ══════════ */
+const salas = [
+  {
+    id:"portada", tipo:"portada", rotulo:"Portada", icono:"🏛️", color:"var(--griega)"
+  },
+  {
+    id:"grecia", tipo:"galeria", rotulo:"Sala 1 · Grecia antigua", icono:"🏺", color:"var(--griega)",
+    titulo:"La Antigüedad griega: los orígenes del pensamiento sobre la mente",
+    deck:"Donde la filosofía y la medicina empezaron a preguntarse por el alma, la razón y el cuerpo",
+    personajes:[
+      {icono:"⚕️", wiki:"Hipócrates", nombre:"Hipócrates", nombreCompleto:"Hipócrates de Cos", fechas:"c. 460 a. C. – c. 370 a. C.", disciplina:"Medicina",
+       contexto:"Grecia clásica, época en la que comenzó a desarrollarse una medicina basada en la observación y en explicaciones naturales.",
+       aportes:"Cuestionó las explicaciones sobrenaturales de las enfermedades y defendió la búsqueda de causas naturales. La tradición hipocrática relacionó los cuatro humores —sangre, flema, bilis amarilla y bilis negra— con la salud y el temperamento. También dio importancia a la observación de los pacientes.",
+       ciencias:"Ciencias naturales y de la salud, especialmente medicina, biología y observación clínica."},
+      {icono:"📜", wiki:"Platón", nombre:"Platón", nombreCompleto:"Platón (Aristocles)", fechas:"c. 427 a. C. – c. 347 a. C.", disciplina:"Filosofía",
+       contexto:"Atenas clásica; fundador de la Academia.",
+       aportes:"Reflexionó sobre el alma, la razón, las emociones y el comportamiento humano. Planteó una división del alma en tres partes: racional, irascible y apetitiva. También estudió temas relacionados con el conocimiento, la memoria y el aprendizaje.",
+       ciencias:"Ciencias sociales y humanidades, especialmente filosofía, ética y educación."},
+      {icono:"📚", wiki:"Aristóteles", nombre:"Aristóteles", nombreCompleto:"Aristóteles de Estagira", fechas:"384 a. C. – 322 a. C.", disciplina:"Filosofía natural",
+       contexto:"Grecia clásica; fundador del Liceo.",
+       aportes:"En su obra De Anima desarrolló un estudio sistemático sobre el alma y sus funciones. Diferenció las funciones nutritiva, sensitiva y racional. También reflexionó sobre percepción, memoria, sueño, emociones y pensamiento.",
+       ciencias:"Ciencias naturales y sociales, principalmente biología, filosofía y lógica."}
+    ]
+  },
+  {
+    id:"medieval", tipo:"galeria", rotulo:"Sala 2 · Edad Media", icono:"⛪", color:"var(--medieval)",
+    titulo:"La Edad Media: fe, razón y vida interior",
+    deck:"El pensamiento sobre el alma se entrelaza con la teología y sienta las bases de la introspección",
+    personajes:[
+      {icono:"🕊️", wiki:"Agustín de Hipona", nombre:"Agustín de Hipona", nombreCompleto:"Aurelio Agustín de Hipona", fechas:"354 – 430 d. C.", disciplina:"Filosofía y teología",
+       contexto:"Antigüedad tardía y expansión del cristianismo en Occidente.",
+       aportes:"Reflexionó profundamente sobre la vida interior, la memoria, la voluntad, las emociones y la experiencia subjetiva del tiempo. Sus reflexiones sobre el conocimiento de uno mismo constituyen un antecedente importante de la introspección.",
+       ciencias:"Ciencias sociales y humanidades, especialmente filosofía, teología y ética."},
+      {icono:"✝️", wiki:"Tomás de Aquino", nombre:"Tomás de Aquino", nombreCompleto:"Tomás de Aquino", fechas:"1225 – 1274", disciplina:"Escolástica",
+       contexto:"Edad Media, desarrollo de la escolástica y crecimiento de las universidades europeas.",
+       aportes:"Integró el pensamiento de Aristóteles con la doctrina cristiana. Analizó la relación entre cuerpo y alma, los sentidos, el intelecto, las pasiones, la voluntad y la libertad.",
+       ciencias:"Ciencias sociales y humanidades, principalmente filosofía, teología y ética."}
+    ]
+  },
+  {
+    id:"moderna", tipo:"galeria", rotulo:"Sala 3 · Edad Moderna", icono:"🖋️", color:"var(--moderna)",
+    titulo:"Edad Moderna: racionalismo, empirismo y el sujeto que piensa",
+    deck:"El conocimiento deja de depender solo de la fe: la razón y la experiencia toman el centro del debate",
+    personajes:[
+      {icono:"🌀", wiki:"René Descartes", nombre:"René Descartes", nombreCompleto:"René Descartes", fechas:"1596 – 1650", disciplina:"Racionalismo",
+       contexto:"Surgimiento de la filosofía moderna y desarrollo de nuevas formas de pensamiento científico.",
+       aportes:"Su expresión «pienso, luego existo» destacó la importancia del pensamiento y la conciencia. Propuso el dualismo entre mente y cuerpo y consideró el cuerpo desde una perspectiva mecánica. También relacionó la glándula pineal con la interacción entre mente y cuerpo.",
+       ciencias:"Ciencias naturales y sociales, especialmente matemáticas, fisiología y filosofía."},
+      {icono:"📄", wiki:"John Locke", nombre:"John Locke", nombreCompleto:"John Locke", fechas:"1632 – 1704", disciplina:"Empirismo",
+       contexto:"Inglaterra durante el desarrollo del empirismo y la Ilustración.",
+       aportes:"Defendió la idea de la mente como una tabula rasa, señalando que el conocimiento se desarrolla a partir de la experiencia. Estudió la percepción y diferenció cualidades primarias y secundarias.",
+       ciencias:"Ciencias sociales y humanidades, especialmente filosofía, educación y teoría del conocimiento."},
+      {icono:"🔗", wiki:"David Hume", nombre:"David Hume", nombreCompleto:"David Hume", fechas:"1711 – 1776", disciplina:"Empirismo",
+       contexto:"Ilustración escocesa y desarrollo del empirismo.",
+       aportes:"Estudió la naturaleza humana desde la experiencia. Diferenció entre impresiones e ideas y explicó la importancia de las asociaciones mentales. Analizó relaciones como semejanza, contigüidad y causalidad, ideas que posteriormente tendrían influencia en el estudio del aprendizaje y la asociación.",
+       ciencias:"Ciencias sociales y humanidades, especialmente filosofía, ética y lógica."},
+      {icono:"🧩", wiki:"Immanuel Kant", nombre:"Immanuel Kant", nombreCompleto:"Immanuel Kant", fechas:"1724 – 1804", disciplina:"Criticismo",
+       contexto:"Ilustración alemana y debate entre racionalismo y empirismo.",
+       aportes:"Planteó que la mente no se limita a recibir información, sino que organiza la experiencia mediante estructuras y categorías. Diferenció entre fenómeno y noúmeno y reflexionó sobre las posibilidades y límites del conocimiento psicológico.",
+       ciencias:"Ciencias sociales y humanidades, especialmente filosofía, epistemología y lógica."}
+    ]
+  },
+  {
+    id:"xix", tipo:"galeria", rotulo:"Sala 4 · Siglo XIX", icono:"🔬", color:"var(--xix)",
+    titulo:"Siglo XIX: los precursores inmediatos de la psicología científica",
+    deck:"La medición y el experimento entran al estudio de la mente, hasta llegar al primer laboratorio",
+    personajes:[
+      {icono:"📐", wiki:"Gustav Fechner", nombre:"Gustav Theodor Fechner", nombreCompleto:"Gustav Theodor Fechner", fechas:"1801 – 1887", disciplina:"Psicofísica",
+       contexto:"Siglo XIX, época de desarrollo de la fisiología experimental, la física y los métodos de medición.",
+       aportes:"Fue uno de los principales fundadores de la psicofísica, disciplina que estudia cuantitativamente la relación entre los estímulos físicos y las sensaciones. Sus investigaciones ayudaron a demostrar que ciertos aspectos de la experiencia sensorial podían estudiarse mediante mediciones y relaciones matemáticas.",
+       ciencias:"Ciencias naturales, especialmente física, fisiología y matemáticas."},
+      {icono:"👁️", wiki:"Hermann von Helmholtz", nombre:"Hermann von Helmholtz", nombreCompleto:"Hermann von Helmholtz", fechas:"1821 – 1894", disciplina:"Fisiología",
+       contexto:"Desarrollo de la fisiología experimental y de las investigaciones científicas sobre los sentidos.",
+       aportes:"Investigó la velocidad de conducción del impulso nervioso y realizó importantes estudios sobre la visión, la audición y la percepción del color. Sus investigaciones demostraron la importancia de utilizar métodos experimentales y de medición para estudiar procesos relacionados con la percepción.",
+       ciencias:"Ciencias naturales, especialmente fisiología, física, anatomía y óptica."},
+      {icono:"🧪", wiki:"Wilhelm Wundt", nombre:"Wilhelm Wundt", nombreCompleto:"Wilhelm Maximilian Wundt", fechas:"1832 – 1920", disciplina:"Psicología experimental",
+       contexto:"Finales del siglo XIX, período en el que la psicología comenzó a consolidarse como disciplina académica independiente.",
+       aportes:"En 1879 estableció en Leipzig el laboratorio que tradicionalmente se reconoce como el primer laboratorio de psicología experimental. Estudió procesos como la sensación, la percepción y los tiempos de reacción, y utilizó métodos experimentales e introspectivos controlados. Su trabajo fue fundamental para institucionalizar la psicología como disciplina independiente.",
+       ciencias:"Ciencias naturales y sociales, especialmente fisiología, filosofía y experimentación.",
+       destacado:true}
+    ]
+  },
+  {
+    id:"reflexion", tipo:"texto", rotulo:"Sala 5 · Reflexión final", icono:"💭", color:"var(--acento)"
+  },
+  {
+    id:"bibliografia", tipo:"biblio", rotulo:"Sala 6 · Bibliografía", icono:"📚", color:"var(--texto-suave)"
+  }
+];
+
+const visitadas = new Set();
+let indiceActual = 0;
+
+const rail = document.getElementById("rail");
+const escenario = document.getElementById("escenario");
+const velo = document.getElementById("velo");
+const modalContenido = document.getElementById("modal-contenido");
+const iconoMarca = document.getElementById("icono-marca");
+
+/* ══════════ RAIL ══════════ */
+const tituloRail = document.createElement("div");
+tituloRail.className = "titulo-rail";
+tituloRail.textContent = "Recorrido del museo";
+rail.appendChild(tituloRail);
+
+salas.forEach((sala, i) => {
+  const b = document.createElement("button");
+  b.className = "sala-btn";
+  b.dataset.i = i;
+  b.innerHTML = `<span class="punto"></span> ${sala.icono} ${sala.rotulo} <span class="check">✓</span>`;
+  b.addEventListener("click", () => irASala(i));
+  rail.appendChild(b);
+});
+
+/* ══════════ RENDER DE VISTAS ══════════ */
+function renderPortada(sala){
+  const total = salas.length - 1;
+  let html = `
+    <div class="hero-portada">
+      <div class="simbolo">🧠</div>
+      <h1>Los pioneros de la psicología precientífica</h1>
+      <p>Antecedentes filosóficos, históricos y culturales del pensamiento psicológico —
+      un recorrido por quienes, desde la filosofía, la medicina, la fisiología y otras áreas del
+      conocimiento, prepararon el camino hacia la psicología como ciencia.</p>
+      <div class="credito-grid">
+        <div class="credito-chip"><span>Institución</span><strong>UNAD — Psicología</strong></div>
+        <div class="credito-chip"><span>Integrantes</span><strong>Wandy Michell Ortiz Ropero<br>Karen Julieth Correa Sanabria</strong></div>
+      </div>
+    </div>
+    <p class="deck-sala" style="margin-bottom:16px">Este recorrido presenta algunos de los
+    principales pensadores que aportaron ideas para construir las bases del pensamiento
+    psicológico. Sus reflexiones sobre el alma, la mente, el conocimiento, las emociones, la
+    percepción y la conducta fueron cambiando con el tiempo hasta contribuir al surgimiento de la
+    psicología como disciplina científica.</p>
+    <div class="mapa-salas">`;
+  salas.slice(1).forEach((s, i) => {
+    html += `<button class="mapa-item" data-ir="${i+1}"><span class="n">Sala ${i+1}</span>
+      <strong>${s.icono} ${s.rotulo.replace(/Sala \d+ · /,"")}</strong>
+      <em>Entrar →</em></button>`;
+  });
+  html += `</div>`;
+  escenario.innerHTML = html;
+  escenario.querySelectorAll("[data-ir]").forEach(el =>
+    el.addEventListener("click", () => irASala(parseInt(el.dataset.ir))));
+}
+
+function renderGaleria(sala){
+  let html = `
+    <div class="etiqueta-sala">${sala.icono} ${sala.rotulo}</div>
+    <h2>${sala.titulo}</h2>
+    <p class="deck-sala">${sala.deck}</p>
+    <div class="galeria">`;
+  sala.personajes.forEach((p, i) => {
+    html += `
+      <button class="cuadro" data-sala="${sala.id}" data-idx="${i}">
+        <div class="marco" data-foto="${sala.id}-${i}" aria-label="Retrato de ${p.nombre}"></div>
+        <div class="info">
+          <div class="disciplina">${p.disciplina}</div>
+          <h3>${p.nombre}</h3>
+          <div class="fechas">${p.fechas}</div>
+        </div>
+      </button>`;
+  });
+  html += `</div>`;
+  escenario.innerHTML = html;
+  escenario.querySelectorAll(".cuadro").forEach(el =>
+    el.addEventListener("click", () => abrirFicha(el.dataset.sala, parseInt(el.dataset.idx))));
+  sala.personajes.forEach((p, i) => cargarFoto(p, `.marco[data-foto="${sala.id}-${i}"]`));
+}
+
+function renderTexto(sala){
+  escenario.innerHTML = `
+    <div class="etiqueta-sala">${sala.icono} ${sala.rotulo}</div>
+    <h2>Una sola pregunta, muchos siglos de respuestas</h2>
+    <div class="texto-largo">
+      <p>La psicología no nació de la nada. Su desarrollo fue el resultado de muchos siglos de
+      preguntas y reflexiones sobre el ser humano, el alma, la mente, el conocimiento, las
+      emociones y la conducta.</p>
+      <p class="cita-destacada">Desde Hipócrates y los filósofos griegos hasta los investigadores
+      del siglo XIX, cada época aportó nuevas formas de comprender al ser humano.</p>
+      <p>La filosofía permitió plantear preguntas sobre la mente y el conocimiento, mientras que la
+      medicina, la fisiología, la física y las matemáticas aportaron observación, experimentación y
+      medición.</p>
+      <p>Por esta razón, conocer los antecedentes de la psicología permite comprender que nuestra
+      disciplina se construyó a partir de diferentes áreas del conocimiento. El establecimiento del
+      laboratorio de Wundt en Leipzig en 1879 representa un momento fundamental en el proceso de
+      consolidación de la psicología experimental.</p>
+    </div>`;
+}
+
+function renderBiblio(sala){
+  escenario.innerHTML = `
+    <div class="etiqueta-sala">${sala.icono} ${sala.rotulo}</div>
+    <h2>Bibliografía</h2>
+    <p class="deck-sala">Normas APA, séptima edición</p>
+    <div class="ref-item">Castro, J. (2017). <i>Historia de la psicología</i>. UNED - Universidad Nacional de Educación a Distancia. <a href="https://elibro-net.bibliotecavirtual.unad.edu.co/es/lc/unad/titulos/103058" target="_blank" rel="noopener">elibro-net.bibliotecavirtual.unad.edu.co</a></div>
+    <div class="ref-item">Fernández, C. N., &amp; Buis, E. J. (2022). Sentir y emocionar(se): aproximaciones al estudio de la afectividad en la Grecia antigua. <i>Circe de Clásicos y Modernos, 26</i>(2), 15–44. <a href="https://research-ebsco-com.bibliotecavirtual.unad.edu.co/linkprocess/plink?id=0ae09296-9f08-3310-a2ab-9897eb22ed23" target="_blank" rel="noopener">research-ebsco-com.bibliotecavirtual.unad.edu.co</a></div>
+    <div class="ref-item">Roncancio-Henao, L., &amp; Gutiérrez, G. (2023). Integración y consolidación disciplinar en la biología y la psicología. Una perspectiva comparada. <i>Interdisciplinaria: Revista de Psicología y Ciencias Afines, 40</i>(2), 7–22. <a href="https://doi-org.bibliotecavirtual.unad.edu.co/10.16888/interd.2023.40.2.1" target="_blank" rel="noopener">doi-org.bibliotecavirtual.unad.edu.co</a></div>`;
+}
+
+/* ══════════ FICHA MODAL ══════════ */
+function abrirFicha(salaId, idx){
+  const sala = salas.find(s => s.id === salaId);
+  const p = sala.personajes[idx];
+  modalContenido.innerHTML = `
+    <button class="cerrar" id="btn-cerrar">✕</button>
+    <div class="retrato" id="retrato-modal" aria-label="Retrato de ${p.nombre}"></div>
+    <div class="disciplina-modal">${p.disciplina}</div>
+    <h3>${p.nombre}</h3>
+    <div class="subnombre">${p.nombreCompleto}</div>
+    <div class="fechas-modal">${p.fechas}</div>
+    <div class="campo"><h4>Contexto histórico</h4><p>${p.contexto}</p></div>
+    <div class="campo"><h4>Aportes</h4><p>${p.aportes}</p></div>
+    <div class="campo"><h4>Relación con las ciencias</h4><span class="chip-ciencia">${p.ciencias}</span></div>`;
+  velo.classList.add("abierto");
+  document.getElementById("btn-cerrar").addEventListener("click", cerrarFicha);
+  cargarFoto(p, "#retrato-modal");
+}
+
+/* ══════════ FOTOS REALES (Wikipedia) ══════════ */
+const cacheFotos = {};
+function cargarFoto(p, selector){
+  if (!p.wiki) return;
+  const aplicar = (url) => {
+    document.querySelectorAll(selector).forEach(cont => {
+      if (!cont || cont.querySelector("img")) return;
+      const img = document.createElement("img");
+      img.src = url;
+      img.alt = p.nombre;
+      img.loading = "lazy";
+      img.onerror = () => { img.remove(); cont.classList.add("sin-retrato"); };
+      cont.appendChild(img);
+    });
+  };
+  if (cacheFotos[p.wiki]) { if (cacheFotos[p.wiki] !== "error") aplicar(cacheFotos[p.wiki]); return; }
+  fetch(`https://es.wikipedia.org/api/rest_v1/page/summary/${encodeURIComponent(p.wiki)}`)
+    .then(r => r.ok ? r.json() : Promise.reject())
+    .then(data => {
+      const url = data?.thumbnail?.source || data?.originalimage?.source;
+      if (url){ cacheFotos[p.wiki] = url; aplicar(url); }
+      else cacheFotos[p.wiki] = "error";
+    })
+    .catch(() => { cacheFotos[p.wiki] = "error"; });
+}
+function cerrarFicha(){ velo.classList.remove("abierto"); }
+velo.addEventListener("click", e => { if (e.target === velo) cerrarFicha(); });
+document.addEventListener("keydown", e => { if (e.key === "Escape") cerrarFicha(); });
+
+/* ══════════ NAVEGACIÓN ══════════ */
+function irASala(i){
+  indiceActual = i;
+  const sala = salas[i];
+
+  document.querySelectorAll(".sala-btn").forEach((b, bi) => {
+    b.classList.toggle("activa", bi === i);
+    if (bi === i) b.classList.add("visitada");
+  });
+  visitadas.add(i);
+
+  document.documentElement.style.setProperty("--era", sala.color);
+  iconoMarca.textContent = sala.icono;
+
+  if (sala.tipo === "portada") renderPortada(sala);
+  else if (sala.tipo === "galeria") renderGaleria(sala);
+  else if (sala.tipo === "texto") renderTexto(sala);
+  else if (sala.tipo === "biblio") renderBiblio(sala);
+
+  // navegación inferior
+  const nav = document.createElement("div");
+  nav.className = "nav-inferior";
+  nav.innerHTML = `
+    <button id="btn-prev" ${i===0?"disabled":""}>← Sala anterior</button>
+    <button id="btn-next" ${i===salas.length-1?"disabled":""}>Siguiente sala →</button>`;
+  escenario.appendChild(nav);
+  document.getElementById("btn-prev")?.addEventListener("click", () => irASala(i-1));
+  document.getElementById("btn-next")?.addEventListener("click", () => irASala(i+1));
+
+  document.getElementById("texto-progreso").textContent = `${visitadas.size} / ${salas.length} salas visitadas`;
+  document.getElementById("barra-progreso").style.width = `${(visitadas.size/salas.length)*100}%`;
+
+  window.scrollTo({top:0, behavior:"instant"});
+}
+
+irASala(0);
+</script>
+
+</body>
+</html>
