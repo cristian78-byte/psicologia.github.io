@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>El Observador de la Psicología</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,600;0,700;0,900;1,600&family=Source+Serif+4:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#F1E7D3; --paper-dark:#E4D6B8; --ink:#221D15; --ink-soft:#4A4234;
+  --maroon:#6B2632; --gold:#A67C3D; --sage:#4B5842; --rule: rgba(34,29,21,.35);
+  box-sizing:border-box; padding-top:env(safe-area-inset-top,0px); padding-bottom:env(safe-area-inset-bottom,0px);
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth; scroll-padding-top:60px;}
+body{margin:0; background:var(--paper); color:var(--ink); font-family:'Source Serif 4', Georgia, serif; line-height:1.6;}
+body::before{content:"";position:fixed; inset:0; pointer-events:none; opacity:.05; background-image:radial-gradient(var(--ink) .6px, transparent .6px); background-size:3px 3px; z-index:1;}
+
+nav.tabs{position:sticky; top:0; z-index:20; display:flex; justify-content:center; gap:0; background:var(--ink); padding:0 env(safe-area-inset-top,0px); padding-top:env(safe-area-inset-top,0px);}
+nav.tabs a{color:var(--paper); text-decoration:none; font-family:'Playfair Display',serif; font-weight:600; font-size:13px; letter-spacing:.04em; padding:10px 16px; border-right:1px solid rgba(241,231,211,.15); flex:1; text-align:center; max-width:160px;}
+nav.tabs a:hover{background:var(--maroon);}
+
+section.page{min-height:100svh; max-width:900px; margin:0 auto; padding:40px 28px 64px; position:relative;}
+section.page + section.page{border-top:3px double var(--ink);}
+
+/* ---- masthead (page 1) ---- */
+.masthead{text-align:center; border-bottom:4px solid var(--ink); padding-bottom:18px; margin-bottom:22px;}
+.masthead .kicker{font-family:'Playfair Display',serif; font-style:italic; font-size:13px; color:var(--maroon); letter-spacing:.08em;}
+.masthead h1.brand{font-family:'Playfair Display',serif; font-weight:900; font-size:clamp(34px,7vw,58px); margin:6px 0; letter-spacing:.01em;}
+.masthead .rule-row{display:flex; align-items:center; gap:10px; justify-content:center; color:var(--ink-soft); font-size:12px; font-style:italic; margin-top:4px;}
+.masthead .rule-row span.dot{width:5px; height:5px; background:var(--gold); border-radius:50%;}
+
+h2.headline{font-family:'Playfair Display',serif; font-weight:800; font-size:clamp(26px,4.4vw,40px); line-height:1.12; margin:10px 0 4px; color:var(--ink);}
+p.deck{font-style:italic; color:var(--ink-soft); font-size:17px; margin:0 0 14px; border-left:3px solid var(--gold); padding-left:12px;}
+p.byline{font-size:13px; letter-spacing:.03em; color:var(--ink-soft); margin:0 0 22px;}
+p.byline strong{color:var(--ink);}
+
+.tag{display:inline-block; font-family:'Playfair Display',serif; font-style:italic; font-size:12.5px; color:var(--sage); border-top:1px solid var(--rule); border-bottom:1px solid var(--rule); padding:3px 0; margin-bottom:10px;}
+
+.editorial{background:var(--paper-dark); border:1px solid var(--rule); padding:20px 22px; font-style:italic; font-size:16px; color:var(--ink-soft); position:relative; margin-top:18px;}
+.editorial::before{content:"“"; font-family:'Playfair Display',serif; font-size:54px; color:var(--gold); position:absolute; left:8px; top:-6px; font-style:normal;}
+.editorial p{margin:0; padding-left:26px;}
+
+.art-wrap{margin:20px 0 26px; border:1px solid var(--rule); background:var(--paper-dark); padding:10px;}
+.art-wrap figcaption{font-size:12px; text-align:center; color:var(--ink-soft); font-style:italic; margin-top:6px;}
+
+.article-body{columns:2; column-gap:32px; font-size:16.5px;}
+.article-body p{margin:0 0 14px;}
+.article-body p:first-of-type::first-letter{font-family:'Playfair Display',serif; font-weight:900; font-size:52px; float:left; line-height:.8; padding:4px 6px 0 0; color:var(--maroon);}
+@media (max-width:640px){ .article-body{columns:1;} }
+
+.pagefoot{display:flex; justify-content:space-between; font-size:11px; color:var(--ink-soft); border-top:1px solid var(--rule); margin-top:26px; padding-top:8px; font-style:italic;}
+
+.crosshatch{fill:url(#hatch);}
+svg{display:block; margin:0 auto; max-width:100%; height:auto;}
+</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute">
+  <defs>
+    <pattern id="hatch" width="6" height="6" patternTransform="rotate(45)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#221D15" stroke-width="0.7"/>
+    </pattern>
+    <pattern id="hatch2" width="6" height="6" patternTransform="rotate(-45)" patternUnits="userSpaceOnUse">
+      <line x1="0" y1="0" x2="0" y2="6" stroke="#221D15" stroke-width="0.5" opacity=".6"/>
+    </pattern>
+  </defs>
+</svg>
+
+<nav class="tabs">
+  <a href="#p1">Pág. 1 · Portada</a>
+  <a href="#p2">Pág. 2 · Grecia</a>
+  <a href="#p3">Pág. 3 · Método</a>
+  <a href="#p4">Pág. 4 · Síntesis</a>
+</nav>
+
+<!-- PÁGINA 1 -->
+<section class="page" id="p1">
+  <div class="masthead">
+    <div class="kicker">Edición histórica · Precientífica</div>
+    <h1 class="brand">EL OBSERVADOR DE LA PSICOLOGÍA</h1>
+    <div class="rule-row"> 2026 <span class="dot"></span> Cuatro páginas <span class="dot"></span> Ejemplar de estudio</div>
+  </div>
+
+  <h2 class="headline">Los antecedentes de la psicología: entre las ciencias sociales y las ciencias naturales</h2>
+  <p class="deck">De las especulaciones filosóficas al estudio de la naturaleza humana.</p>
+  <p class="byline">Por <strong>María Geraldine Ariza Niño</strong></p>
+
+  <figure class="art-wrap">
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+      <rect x="0" y="0" width="700" height="220" fill="#E4D6B8"/>
+      <!-- greek key border -->
+      <g fill="none" stroke="#221D15" stroke-width="2">
+        <path d="M20 20 H680 M20 215 H680"/>
+      </g>
+      <!-- open book / mind silhouette -->
+      <g>
+        <path d="M180 170 C180 90 240 70 260 70 C240 90 235 150 260 170 Z" class="crosshatch" stroke="#221D15" stroke-width="1.5"/>
+        <path d="M420 170 C420 90 460 70 480 70 C460 90 465 150 440 170 Z" fill="url(#hatch2)" stroke="#221D15" stroke-width="1.5"/>
+        <path d="M180 170 Q350 120 520 170" fill="none" stroke="#221D15" stroke-width="2.5"/>
+        <path d="M350 120 L350 170" stroke="#221D15" stroke-width="2"/>
+        <circle cx="350" cy="95" r="26" fill="none" stroke="#6B2632" stroke-width="2.5"/>
+        <path d="M336 92 q14 -14 28 0" fill="none" stroke="#6B2632" stroke-width="1.5"/>
+        <path d="M334 100 q16 12 32 0" fill="none" stroke="#6B2632" stroke-width="1.5"/>
+      </g>
+      <text x="350" y="205" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-size="13" fill="#4A4234">La mente como puente entre el ánima y la naturaleza</text>
+    </svg>
+    <figcaption>Grabado alegórico — el libro y la razón como umbral hacia el estudio de la mente.</figcaption>
+  </figure>
+
+  <div class="editorial">
+    <p>El camino hacia la comprensión de la mente y el comportamiento humano no surgió de forma aislada. Este periódico explora las raíces históricas y filosóficas de la psicología precientífica, analizando cómo las ciencias sociales y las ciencias naturales moldearon sus primeros cimientos.</p>
+  </div>
+  <div class="pagefoot"><span>El Observador de la Psicología</span><span>Página 1</span></div>
+</section>
+
+<!-- PÁGINA 2 -->
+<section class="page" id="p2">
+  <span class="tag">Ciencias Sociales y Humanidades</span>
+  <h2 class="headline">El alma y la razón: el debate entre Platón y Aristóteles</h2>
+
+  <figure class="art-wrap">
+    <svg viewBox="0 0 700 200" xmlns="http://www.w3.org/2000/svg">
+      <rect width="700" height="200" fill="#E4D6B8"/>
+      <line x1="350" y1="15" x2="350" y2="185" stroke="#221D15" stroke-width="1" stroke-dasharray="3 4" opacity=".5"/>
+      <!-- Plato bust -->
+      <image href="platon.png" x="175" y="25" width="110" height="145" preserveAspectRatio="xMidYMid meet"/>
+      <text x="230" y="192" text-anchor="middle" font-family="Playfair Display, serif" font-weight="700" font-size="15" fill="#221D15">Platón</text>
+      <!-- Aristotle bust -->
+      <g>
+      </g>
+      <image href="aristoteles.png" x="320" y="25" width="300" height="145" preserveAspectRatio="xMidYMid meet"/>
+      <text x="470" y="192" text-anchor="middle" font-family="Playfair Display, serif" font-weight="700" font-size="15" fill="#221D15">Aristóteles</text>
+    </svg>
+    <figcaption>Busto ideado de Platón y Aristóteles, protagonistas del debate clásico sobre el alma.</figcaption>
+  </figure>
+
+  <div class="article-body">
+    <p>La búsqueda por comprender el psiquismo humano inició en la Grecia clásica. Mientras Platón planteaba un dualismo radical sosteniendo que el alma era inmortal y pertenecía al mundo de las ideas, Aristóteles propuso una visión integrada en su tratado <em>De Anima</em>.</p>
+    <p>Aristóteles concibió el alma (psiqué) como el principio vital de todo ser vivo y la forma del cuerpo, sentando las bases del empirismo al afirmar que el conocimiento proviene de la experiencia sensible y la observación formal.</p>
+  </div>
+  <div class="pagefoot"><span>El Observador de la Psicología</span><span>Página 2</span></div>
+</section>
+
+<!-- PÁGINA 3 -->
+<section class="page" id="p3">
+  <span class="tag">Ciencias Naturales</span>
+  <h2 class="headline">Del cuerpo a la mente: el impacto del mecanicismo y el empirismo</h2>
+
+  <figure class="art-wrap">
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+      <rect width="700" height="220" fill="#E4D6B8"/>
+      <!-- res cogitans -->
+      <ellipse cx="220" cy="90" rx="80" ry="55" class="crosshatch" stroke="#221D15" stroke-width="2"/>
+      <text x="220" y="95" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-size="15" fill="#221D15">res cogitans</text>
+      <text x="220" y="160" text-anchor="middle" font-family="Source Serif 4, serif" font-size="12" fill="#4A4234">(mente)</text>
+      <!-- res extensa -->
+      <rect x="420" y="45" width="160" height="90" fill="url(#hatch2)" stroke="#221D15" stroke-width="2"/>
+      <text x="500" y="95" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-size="15" fill="#221D15">res extensa</text>
+      <text x="500" y="160" text-anchor="middle" font-family="Source Serif 4, serif" font-size="12" fill="#4A4234">(cuerpo)</text>
+      <!-- pineal link -->
+      <path d="M300 90 C340 90 360 90 420 90" fill="none" stroke="#6B2632" stroke-width="2.5" marker-end="url(#arrow)"/>
+      <defs><marker id="arrow" markerWidth="10" markerHeight="10" refX="6" refY="3" orient="auto"><path d="M0,0 L6,3 L0,6 Z" fill="#6B2632"/></marker></defs>
+      <circle cx="360" cy="90" r="5" fill="#6B2632"/>
+      <text x="360" y="115" text-anchor="middle" font-family="Source Serif 4, serif" font-style="italic" font-size="11" fill="#6B2632">glándula pineal</text>
+      <line x1="70" y1="190" x2="630" y2="190" stroke="#221D15" stroke-width="1"/>
+      <text x="350" y="208" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-size="13" fill="#4A4234">El dualismo interaccionista de Descartes</text>
+    </svg>
+    <figcaption>Esquema del dualismo cartesiano: mente y materia unidas por la glándula pineal.</figcaption>
+  </figure>
+
+  <div class="article-body">
+    <p>Con el advenimiento de la Edad Moderna, el pensamiento psicológico se nutrió del modelo de las ciencias naturales. René Descartes introdujo el dualismo interaccionista, dividiendo la realidad en la <em>res cogitans</em> (mente/pensamiento) y la <em>res extensa</em> (cuerpo/materia), explicando el comportamiento reflejo a través de leyes mecánicas.</p>
+    <p>Posteriormente, el empirismo británico (Locke, Hume) rechazó las ideas innatas y propuso que la mente es una tabla rasa, abriendo el camino para estudiar la percepción y la asociación de ideas mediante métodos de observación empírica.</p>
+  </div>
+  <div class="pagefoot"><span>El Observador de la Psicología</span><span>Página 3</span></div>
+</section>
+
+<!-- PÁGINA 4 -->
+<section class="page" id="p4">
+  <span class="tag">Integración Disciplinar</span>
+  <h2 class="headline">¿Ciencia social o ciencia natural? La encrucijada de la psicología precientífica</h2>
+
+  <figure class="art-wrap">
+    <svg viewBox="0 0 700 220" xmlns="http://www.w3.org/2000/svg">
+      <rect width="700" height="220" fill="#E4D6B8"/>
+      <circle cx="290" cy="110" r="90" fill="url(#hatch2)" stroke="#221D15" stroke-width="2" opacity=".9"/>
+      <circle cx="410" cy="110" r="90" class="crosshatch" stroke="#221D15" stroke-width="2" opacity=".9"/>
+      <text x="270" y="102" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-size="14" fill="#221D15">Ciencias</text>
+      <text x="270" y="118" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-size="14" fill="#221D15">Sociales</text>
+      <text x="430" y="102" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-size="14" fill="#221D15">Ciencias</text>
+      <text x="430" y="118" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-size="14" fill="#221D15">Naturales</text>
+      <text x="350" y="110" text-anchor="middle" dominant-baseline="middle" font-family="Playfair Display, serif" font-style="italic" font-weight="700" font-size="13" fill="#6B2632">Psicología</text>
+      <text x="350" y="10" text-anchor="middle" font-family="Playfair Display, serif" font-style="italic" font-size="13" fill="#4A4234">un puente entre dos tradiciones</text>
+    </svg>
+    <figcaption>La psicología precientífica como punto de encuentro entre dos tradiciones del saber.</figcaption>
+  </figure>
+
+  <div class="article-body">
+    <p>La psicología precientífica se consolidó como un puente entre la comprensión social e histórica de la existencia humana y la rigurosidad biológica de las ciencias naturales.</p>
+    <p>Esta doble raíz teórica demostró que para entender los procesos mentales es indispensable analizar tanto el funcionamiento del organismo somático como la influencia del entorno cultural y socio-filosófico en el que se desarrolla el individuo.</p>
+  </div>
+  <div class="pagefoot"><span>El Observador de la Psicología</span><span>Página 4 · Fin de la edición</span></div>
+</section>
+
+</body>
+</html>
